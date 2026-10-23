@@ -1,24 +1,37 @@
 <div align="center">
-   
-# Shizuku
+
+# Shizuku (filip-spaldon fork)
 
 An Android app that allows other apps to use system-level APIs that require ADB/root privileges.
 
-**I'm pausing maintenance for the time being, I simply haven't had time to work on this and it was a side project.**
-
-[![Stars](https://img.shields.io/github/stars/thedjchi/Shizuku?style=for-the-badge&color=bfb330&labelColor=807820&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHRpdGxlPnN0YXI8L3RpdGxlPjxwYXRoIGQ9Ik0xMiwxNy4yN0wxOC4xOCwyMUwxNi41NCwxMy45N0wyMiw5LjI0TDE0LjgxLDguNjJMMTIsMkw5LjE5LDguNjJMMiw5LjI0TDcuNDUsMTMuOTdMNS44MiwyMUwxMiwxNy4yN1oiIGZpbGw9IndoaXRlIiAvPjwvc3ZnPg==)](https://github.com/thedjchi/Shizuku/stargazers)
-[![Downloads](https://img.shields.io/github/downloads/thedjchi/Shizuku/total?style=for-the-badge&color=bf7830&labelColor=805020&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHRpdGxlPmRvd25sb2FkPC90aXRsZT48cGF0aCBkPSJNNSwyMEgxOVYxOEg1TTE5LDlIMTVWM0g5VjlINUwxMiwxNkwxOSw5WiIgZmlsbD0id2hpdGUiIC8+PC9zdmc+)](https://github.com/thedjchi/Shizuku/releases)
-
-[![Latest Stable](https://img.shields.io/github/v/release/thedjchi/Shizuku?style=for-the-badge&color=3060bf&labelColor=204080&label=Latest%20Stable&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4IiBmaWxsPSIjZTNlM2UzIj48cGF0aCBkPSJNNDQwLTgycS03Ni04LTE0MS41LTQxLjV0LTExNC04N1ExMzYtMjY0IDEwOC0zMzNUODAtNDgwcTAtOTEgMzYuNS0xNjhUMjE2LTc4MGgtOTZ2LTgwaDI0MHYyNDBoLTgwdi0xMDlxLTU1IDQ0LTg3LjUgMTA4LjVUMTYwLTQ4MHEwIDEyMyA4MC41IDIxMi41VDQ0MC0xNjN2ODFabS0xNy0yMTRMMjU0LTQ2Nmw1Ni01NiAxMTMgMTEzIDIyNy0yMjcgNTYgNTctMjgzIDI4M1ptMTc3IDE5NnYtMjQwaDgwdjEwOXE1NS00NSA4Ny41LTEwOVQ4MDAtNDgwcTAtMTIzLTgwLjUtMjEyLjVUNTIwLTc5N3YtODFxMTUyIDE1IDI1NiAxMjh0MTA0IDI3MHEwIDkxLTM2LjUgMTY4VDc0NC0xODBoOTZ2ODBINjAwWiIvPjwvc3ZnPg==)](https://github.com/thedjchi/Shizuku/releases/latest?q=prerelease%3Afalse&expanded=true)
-[![Latest Beta](https://img.shields.io/github/v/release/thedjchi/Shizuku?sort=semver&style=for-the-badge&color=30bf60&labelColor=208040&label=Latest%20Beta&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4IiBmaWxsPSIjZTNlM2UzIj48cGF0aCBkPSJNMjAwLTEyMHEtNTEgMC03Mi41LTQ1LjVUMTM4LTI1MGwyMjItMjcwdi0yNDBoLTQwcS0xNyAwLTI4LjUtMTEuNVQyODAtODAwcTAtMTcgMTEuNS0yOC41VDMyMC04NDBoMzIwcTE3IDAgMjguNSAxMS41VDY4MC04MDBxMCAxNy0xMS41IDI4LjVUNjQwLTc2MGgtNDB2MjQwbDIyMiAyNzBxMzIgMzkgMTAuNSA4NC41VDc2MC0xMjBIMjAwWm04MC0xMjBoNDAwTDU0NC00MDBINDE2TDI4MC0yNDBabS04MCA0MGg1NjBMNTIwLTQ5MnYtMjY4aC04MHYyNjhMMjAwLTIwMFptMjgwLTI4MFoiLz48L3N2Zz4=)](https://github.com/thedjchi/Shizuku/releases)
-
-[![Bug Reports](https://img.shields.io/github/issues-search/thedjchi/Shizuku?query=label%3Abug%20state%3Aopen&style=for-the-badge&color=bf3030&labelColor=802020&label=Bug%20Reports)](https://github.com/thedjchi/Shizuku/issues?q=is%3Aissue%20state%3Aopen%20label%3Abug)
-[![Feature Requests](https://img.shields.io/github/issues-search/thedjchi/Shizuku?query=label%3Aenhancement%20state%3Aopen&style=for-the-badge&color=30a7bf&labelColor=207080&label=Feature%20Requests)](https://github.com/thedjchi/Shizuku/issues?q=is%3Aissue%20state%3Aopen%20label%3Aenhancement)
-
-[![Translate on Crowdin](https://img.shields.io/badge/Translate%20on%20Crowdin-2e3340?style=for-the-badge&logo=crowdin&logoColor=ffffff)](https://crowdin.com/project/shizuku)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-bfb330?style=for-the-badge&logo=buymeacoffee&logoColor=ffffff)](https://www.buymeacoffee.com/thedjchi)
+**Personal fork of [thedjchi/Shizuku](https://github.com/thedjchi/Shizuku) with Android 17 fixes and app-triggered start/stop.**
 
 </div>
+
+## 🍴 About This Fork
+
+This fork is maintained by [filip-spaldon](https://github.com/filip-spaldon). It is based on [thedjchi/Shizuku](https://github.com/thedjchi/Shizuku) 13.7.0, which itself is a fork of [RikkaApps/Shizuku](https://github.com/RikkaApps/Shizuku). Both upstream projects are currently not maintained.
+
+### Changes compared to thedjchi/Shizuku 13.7.0
+
+* **Android 17 fix: false "USB debugging is not enabled"**: Android 17 always reports `Settings.Global.ADB_ENABLED` as `0` to third-party apps, so the start button refused to start even with USB debugging on. On SDK 37+ a `0` is now treated as unknown. Fix by [RazGame](https://github.com/RazGame/Shizuku) (thedjchi/Shizuku#301).
+* **Built against the Android 17 SDK** (`targetSdk 37`), also from [RazGame](https://github.com/RazGame/Shizuku).
+* **Start with selected apps** (Settings → Behavior): pick apps from a list, and Shizuku starts in the background whenever one of them is opened. Uses a small accessibility service that only receives window changes of the selected apps and never reads window content. If Shizuku has `WRITE_SECURE_SETTINGS`, the service is enabled automatically.
+* **Stop when the apps are closed**: if Shizuku was started by one of the selected apps, it is stopped again about a minute after none of them is in the foreground or running a foreground service (e.g. music playback). A Shizuku started manually is never stopped this way.
+* In-app updates, source code and bug report links point to this fork.
+
+Tested on a Pixel 9 Pro running Android 17 QPR3 beta.
+
+> [!IMPORTANT]
+> Releases of this fork are signed with a different key than the official, thedjchi or RazGame builds. To switch, uninstall the existing Shizuku first. Wireless debugging pairing and app authorizations have to be set up again.
+
+### Background start requirements
+
+Starting Shizuku automatically (on boot or for selected apps) uses wireless debugging and needs `WRITE_SECURE_SETTINGS`, granted once over adb:
+
+```
+adb shell pm grant moe.shizuku.privileged.api android.permission.WRITE_SECURE_SETTINGS
+```
 
 ## ⚠️ Disclaimer
 
@@ -26,9 +39,7 @@ This is a **FORK** of Shizuku. If you are looking for the original version, plea
 
 ## ⬇️ Download
 
-Get the latest [stable](https://github.com/thedjchi/Shizuku/releases/latest) or [beta](https://github.com/thedjchi/Shizuku/releases) version.
-
-All versions are distributed via [GitHub Releases](https://github.com/thedjchi/Shizuku/releases).
+Get the latest release of this fork from [GitHub Releases](https://github.com/filip-spaldon/Shizuku/releases/latest).
 
 ## ✨ Added Features
 
@@ -79,6 +90,8 @@ Shizuku takes user privacy very seriously.
 * **WRITE_SECURE_SETTINGS:** used to toggle USB and wireless debugging in the background when starting/stopping Shizuku
 * **REQUEST_DELETE_PACKAGES:** used to request uninstall for Shizuku/stub when using stealth mode
 * **REQUEST_INSTALL_PACKAGES:** used to request install for app updates, as well as Shizuku stub when using stealth mode
+* **Accessibility service (optional):** used only by "Start with selected apps" to notice when a selected app is opened
+* **Package visibility of launcher apps:** used to list apps in the "Start with selected apps" picker
 
 ## 🌎 Translations
 
