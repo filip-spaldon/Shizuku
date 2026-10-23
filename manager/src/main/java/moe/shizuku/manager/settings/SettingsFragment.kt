@@ -30,10 +30,12 @@ import androidx.preference.Preference.SummaryProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.CancellableContinuation
@@ -49,6 +51,7 @@ import moe.shizuku.manager.ktx.toHtml
 import moe.shizuku.manager.receiver.BootCompleteReceiver
 import moe.shizuku.manager.receiver.NotifCancelReceiver
 import moe.shizuku.manager.receiver.ShizukuReceiverStarter
+import moe.shizuku.manager.service.AppTriggerAccessibilityService
 import moe.shizuku.manager.utils.CustomTabsHelper
 import moe.shizuku.manager.utils.EnvironmentUtils
 import moe.shizuku.manager.utils.SettingsHelper
@@ -66,6 +69,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private lateinit var startOnBootPreference: TwoStatePreference
     private lateinit var watchdogPreference: TwoStatePreference
+    private lateinit var appTriggerPreference: Preference
+    private lateinit var appTriggerStopPreference: TwoStatePreference
     private lateinit var tcpModePreference: TwoStatePreference
     private lateinit var tcpPortPreference: EditTextPreference
     private lateinit var languagePreference: ListPreference
@@ -100,6 +105,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
         startOnBootPreference = findPreference(KEY_START_ON_BOOT)!!
         watchdogPreference = findPreference(KEY_WATCHDOG)!!
+        appTriggerPreference = findPreference(KEY_APP_TRIGGER)!!
+        appTriggerStopPreference = findPreference(KEY_APP_TRIGGER_STOP)!!
         tcpModePreference = findPreference(KEY_TCP_MODE)!!
         tcpPortPreference = findPreference(KEY_TCP_PORT)!!
         languagePreference = findPreference(KEY_LANGUAGE)!!
@@ -175,6 +182,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
                 false
             }
+        }
+
+        appTriggerPreference.setOnPreferenceClickListener {
+            showAppTriggerPicker()
+            true
         }
 
         tcpModePreference.apply {
@@ -327,6 +339,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         super.onResume()
         preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         ShizukuStateMachine.addListener(stateListener)
+        updateAppTriggerSummary()
     }
 
     override fun onPause() {
@@ -338,6 +351,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             KEY_WATCHDOG -> watchdogPreference.isChecked = ShizukuSettings.isWatchdogRunning()
+            KEY_APP_TRIGGER_PACKAGES -> updateAppTriggerSummary()
         }
     }
 
@@ -470,6 +484,87 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             }
             onResult(result)
         }
+    }
+
+    private fun appLabel(packageName: String): String {
+        val pm = requireContext().packageManager
+        return try {
+            pm.getApplicationInfo(packageName, 0).loadLabel(pm).toString()
+        } catch (e: PackageManager.NameNotFoundException) {
+            packageName
+        }
+    }
+
+    private fun updateAppTriggerSummary() {
+        val context = requireContext()
+        val packages = ShizukuSettings.getAppTriggerPackages()
+        appTriggerStopPreference.isEnabled = packages.isNotEmpty()
+        appTriggerPreference.summary = when {
+            packages.isEmpty() -> context.getString(R.string.settings_app_trigger_summary_off)
+            !AppTriggerAccessibilityService.isEnabled(context) -> context.getString(R.string.settings_app_trigger_summary_service_off)
+            else -> context.getString(
+                R.string.settings_app_trigger_summary_on,
+                packages.map { appLabel(it) }.sortedWith(String.CASE_INSENSITIVE_ORDER).joinToString(", ")
+            )
+        }
+    }
+
+    private fun showAppTriggerPicker() {
+        val context = requireContext()
+        lifecycleScope.launch {
+            val apps = withContext(Dispatchers.IO) {
+                val pm = context.packageManager
+                val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+                pm.queryIntentActivities(launcherIntent, 0)
+                    .map { it.activityInfo.packageName to it.loadLabel(pm).toString() }
+                    .filter { it.first != context.packageName }
+                    .distinctBy { it.first }
+                    .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.second })
+            }
+            if (!isAdded) return@launch
+
+            val selected = ShizukuSettings.getAppTriggerPackages()
+            val checked = apps.map { it.first in selected }.toBooleanArray()
+
+            MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.dialog_app_trigger_title)
+                .setMultiChoiceItems(apps.map { it.second }.toTypedArray(), checked) { _, which, isChecked ->
+                    checked[which] = isChecked
+                }
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    // Selected packages that are no longer launchable (e.g. uninstalled) are dropped here
+                    val packages = apps.filterIndexed { i, _ -> checked[i] }.map { it.first }.toSet()
+                    ShizukuSettings.setAppTriggerPackages(packages)
+                    if (packages.isEmpty()) {
+                        AppTriggerAccessibilityService.setEnabled(context, false)
+                    } else if (!AppTriggerAccessibilityService.setEnabled(context, true)) {
+                        enableAppTriggerService()
+                    }
+                    updateAppTriggerSummary()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
+    }
+
+    private fun enableAppTriggerService() {
+        val context = requireContext()
+        if (AppTriggerAccessibilityService.setEnabled(context, true)) {
+            updateAppTriggerSummary()
+            return
+        }
+        MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.settings_app_trigger)
+            .setMessage(R.string.dialog_app_trigger_accessibility_message)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                try {
+                    startActivity(Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun setupLocalePreference(languagePreference: ListPreference) {

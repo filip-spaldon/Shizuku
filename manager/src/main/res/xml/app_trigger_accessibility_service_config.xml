@@ -1,0 +1,10 @@
+<!-- packageNames is replaced at runtime with the apps selected in settings. -->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/app_trigger_accessibility_service_description"
+    android:packageNames="moe.shizuku.privileged.api"
+    android:accessibilityFlags="flagDefault"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canRetrieveWindowContent="false"
+    android:notificationTimeout="500"
+/>

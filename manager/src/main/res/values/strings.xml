@@ -172,6 +172,16 @@
     <string name="settings_tcp_port_hint">Leave blank to use default (5555)</string>
     <string name="settings_auto_disable_usb_debugging">Auto-disable USB debugging</string>
     <string name="settings_auto_disable_usb_debugging_summary">Disable USB debugging when stopping Shizuku</string>
+    <string name="settings_app_trigger">Start with selected apps</string>
+    <string name="settings_app_trigger_summary_off">Start Shizuku automatically when one of the selected apps is opened</string>
+    <string name="settings_app_trigger_summary_on">Starts when opening: %s</string>
+    <string name="settings_app_trigger_summary_service_off">Accessibility service is off, tap to enable it</string>
+    <string name="settings_app_trigger_stop">Stop when the apps are closed</string>
+    <string name="settings_app_trigger_stop_summary">If Shizuku was started by one of the selected apps, stop it about a minute after none of them is in the foreground or running a foreground service</string>
+    <string name="dialog_app_trigger_title">Start Shizuku when opening</string>
+    <string name="dialog_app_trigger_accessibility_message">Shizuku needs its \"Start with selected apps\" accessibility service to detect when an app is opened.\n\nEnable it in the next screen. If the switch is greyed out, open Shizuku\'s app info, tap the ⋮ menu and choose \"Allow restricted settings\" first.</string>
+    <string name="app_trigger_accessibility_service_label">Start with selected apps</string>
+    <string name="app_trigger_accessibility_service_description">Detects when one of the apps selected in Shizuku settings is opened and starts Shizuku in the background.\n\nOnly window changes of the selected apps are received. Window content is never read.</string>
     <string name="settings_language">Language</string>
     <string name="settings_translation_contributors">Translation contributors</string>
     <string name="settings_translation">Participate in translation</string>

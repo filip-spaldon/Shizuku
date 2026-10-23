@@ -36,6 +36,16 @@
             android:title="@string/settings_auto_disable_usb_debugging"
             android:summary="@string/settings_auto_disable_usb_debugging_summary" />
 
+        <Preference
+            android:key="app_trigger"
+            android:title="@string/settings_app_trigger" />
+
+        <SwitchPreferenceCompat
+            android:key="app_trigger_stop"
+            android:defaultValue="true"
+            android:title="@string/settings_app_trigger_stop"
+            android:summary="@string/settings_app_trigger_stop_summary" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

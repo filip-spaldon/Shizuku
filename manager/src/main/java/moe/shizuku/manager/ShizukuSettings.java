@@ -12,7 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import java.lang.annotation.Retention;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import moe.shizuku.manager.service.WatchdogService;
 import moe.shizuku.manager.receiver.BootCompleteReceiver;
 import moe.shizuku.manager.utils.Token;
@@ -29,6 +32,10 @@ public class ShizukuSettings {
         public static final String KEY_TCP_MODE = "tcp_mode";
         public static final String KEY_TCP_PORT = "tcp_port";
         public static final String KEY_AUTO_DISABLE_USB_DEBUGGING = "auto_disable_usb_debugging";
+        public static final String KEY_APP_TRIGGER = "app_trigger";
+        public static final String KEY_APP_TRIGGER_PACKAGES = "app_trigger_packages";
+        public static final String KEY_APP_TRIGGER_STOP = "app_trigger_stop";
+        public static final String KEY_APP_TRIGGER_ARMED = "app_trigger_armed";
         public static final String KEY_LANGUAGE = "language";
         public static final String KEY_TRANSLATION = "translation";
         public static final String KEY_TRANSLATION_CONTRIBUTORS = "translation_contributors";
@@ -165,6 +172,27 @@ public class ShizukuSettings {
         }
         getPreferences().edit().putBoolean(Keys.KEY_WATCHDOG, enable).apply();
         return;
+    }
+
+    public static Set<String> getAppTriggerPackages() {
+        return new HashSet<>(getPreferences().getStringSet(Keys.KEY_APP_TRIGGER_PACKAGES, Collections.emptySet()));
+    }
+
+    public static void setAppTriggerPackages(Set<String> packages) {
+        getPreferences().edit().putStringSet(Keys.KEY_APP_TRIGGER_PACKAGES, new HashSet<>(packages)).apply();
+    }
+
+    public static boolean getAppTriggerStop() {
+        return getPreferences().getBoolean(Keys.KEY_APP_TRIGGER_STOP, true);
+    }
+
+    // Set while Shizuku runs because an app trigger started it, so it can be stopped again once those apps close
+    public static boolean getAppTriggerArmed() {
+        return getPreferences().getBoolean(Keys.KEY_APP_TRIGGER_ARMED, false);
+    }
+
+    public static void setAppTriggerArmed(boolean armed) {
+        getPreferences().edit().putBoolean(Keys.KEY_APP_TRIGGER_ARMED, armed).apply();
     }
 
     public static boolean getTcpMode() {

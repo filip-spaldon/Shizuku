@@ -3,6 +3,7 @@ package moe.shizuku.manager.utils
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.RemoteException
+import rikka.hidden.compat.ActivityManagerApis
 import rikka.hidden.compat.PermissionManagerApis
 import rikka.hidden.compat.UserManagerApis
 import rikka.hidden.compat.util.SystemServiceBinder
@@ -49,6 +50,11 @@ object ShizukuSystemApis {
             UserHandleCompat.myUserId(),
             "Unknown"
         )
+    }
+
+    /** Returns an ActivityManager PROCESS_STATE_* value, queried as the shell user. */
+    fun getPackageProcessState(packageName: String, userId: Int): Int {
+        return ActivityManagerApis.getPackageProcessState(packageName, userId, "com.android.shell")
     }
 
     fun getInstalledPackages(flags: Long, userId: Int): List<PackageInfo> {
