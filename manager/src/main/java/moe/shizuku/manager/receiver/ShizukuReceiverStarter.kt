@@ -33,6 +33,7 @@ object ShizukuReceiverStarter {
     enum class WorkerState {
         AWAITING_WIFI,
         AWAITING_RETRY,
+        AWAITING_WIRELESS_DEBUGGING,
         RUNNING,
         STOPPED
     }
@@ -55,7 +56,7 @@ object ShizukuReceiverStarter {
         }
     }
 
-    fun buildNotification(context: Context, msg: String? = null): Notification {
+    fun buildNotification(context: Context, msg: String? = null, settingsPage: SettingsPage = SettingsPage.InternetPanel): Notification {
         val channel = NotificationChannel(
             CHANNEL_ID,
             context.getString(R.string.wadb_notification_title),
@@ -79,7 +80,7 @@ object ShizukuReceiverStarter {
             context, 0, restoreIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val wifiIntent = SettingsPage.InternetPanel.buildIntent(context)
+        val wifiIntent = settingsPage.buildIntent(context)
         val wifiPendingIntent = PendingIntent.getActivity(
             context, 0, wifiIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -105,11 +106,15 @@ object ShizukuReceiverStarter {
         val msgId = when (state) {
             WorkerState.AWAITING_WIFI -> R.string.wadb_notification_wifi_required
             WorkerState.AWAITING_RETRY -> R.string.wadb_notification_retry
+            WorkerState.AWAITING_WIRELESS_DEBUGGING -> R.string.wadb_notification_wireless_debugging_required
             else -> null
         }
         val msg = if (msgId != null) context.getString(msgId) else null
+        val settingsPage =
+            if (state == WorkerState.AWAITING_WIRELESS_DEBUGGING) SettingsPage.Developer.WirelessDebugging
+            else SettingsPage.InternetPanel
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        nm.notify(NOTIFICATION_ID, buildNotification(context, msg))
+        nm.notify(NOTIFICATION_ID, buildNotification(context, msg, settingsPage))
     }
 
     private fun rootStart(context: Context) {

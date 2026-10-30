@@ -18,6 +18,7 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.Helps
 import moe.shizuku.manager.ShizukuSettings
 import moe.shizuku.manager.R
@@ -59,8 +60,8 @@ class StartWirelessAdbViewHolder(binding: HomeStartWirelessAdbBinding, root: Vie
 
             val cr = context.contentResolver
             if (context.checkSelfPermission(WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED) {
-                Settings.Global.putInt(cr, Settings.Global.ADB_ENABLED, 1)
-                Settings.Global.putLong(cr, "adb_allowed_connection_time", 0L)
+                SettingsHelper.putGlobalInt(cr, Settings.Global.ADB_ENABLED, 1)
+                SettingsHelper.putGlobalLong(cr, "adb_allowed_connection_time", 0L)
             }
         
             if (!EnvironmentUtils.isAdbEnabled()) {

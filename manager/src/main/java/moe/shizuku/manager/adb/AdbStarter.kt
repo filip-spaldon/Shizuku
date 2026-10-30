@@ -12,6 +12,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.R
 import moe.shizuku.manager.ShizukuSettings
 import moe.shizuku.manager.adb.AdbClient
@@ -67,7 +68,7 @@ object AdbStarter {
             }
         } finally {
             if (context.checkSelfPermission(WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED)
-                Settings.Global.putInt(context.contentResolver, "adb_wifi_enabled", 0)
+                SettingsHelper.putGlobalInt(context.contentResolver, "adb_wifi_enabled", 0)
         }
     }
 
@@ -75,8 +76,8 @@ object AdbStarter {
         runCatching {
             val cr = context.contentResolver
             if (context.checkSelfPermission(WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED) {
-                Settings.Global.putInt(cr, Settings.Global.ADB_ENABLED, 1)
-                Settings.Global.putLong(cr, "adb_allowed_connection_time", 0L)
+                SettingsHelper.putGlobalInt(cr, Settings.Global.ADB_ENABLED, 1)
+                SettingsHelper.putGlobalLong(cr, "adb_allowed_connection_time", 0L)
             }
         
             if (!EnvironmentUtils.isAdbEnabled()) throw IllegalStateException("ADB is not enabled")

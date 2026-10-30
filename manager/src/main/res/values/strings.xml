@@ -290,6 +290,7 @@
     <string name="wadb_notification_title">Starting Shizuku…</string>
     <string name="wadb_notification_wifi_required">Awaiting Wi-Fi connection before proceeding</string>
     <string name="wadb_notification_retry">Waiting to retry</string>
+    <string name="wadb_notification_wireless_debugging_required">Turn on wireless debugging to continue. Tap to open it.</string>
     <string name="wadb_error_title">Error while starting on boot</string>
     <string name="wadb_error_notify_dev">Tap to notify the developer.</string>
     <string name="wadb_permission_error_notification_title">Permission Error</string>

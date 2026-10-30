@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.R
 import moe.shizuku.manager.ShizukuSettings
 import moe.shizuku.manager.adb.AdbMdns
@@ -50,8 +51,8 @@ class AdbStartWorker(context: Context, params: WorkerParameters) : CoroutineWork
 
             val cr = applicationContext.contentResolver
 
-            Settings.Global.putInt(cr, Settings.Global.ADB_ENABLED, 1)
-            Settings.Global.putLong(cr, "adb_allowed_connection_time", 0L)
+            SettingsHelper.putGlobalInt(cr, Settings.Global.ADB_ENABLED, 1)
+            SettingsHelper.putGlobalLong(cr, "adb_allowed_connection_time", 0L)
 
             val tcpPort = EnvironmentUtils.getAdbTcpPort()
             if (tcpPort > 0 && !ShizukuSettings.getTcpMode()) {
@@ -95,7 +96,7 @@ class AdbStartWorker(context: Context, params: WorkerParameters) : CoroutineWork
                                 if (intent.action == Intent.ACTION_USER_PRESENT) {
                                     context.unregisterReceiver(this)
                                     unlockReceiver = null
-                                    Settings.Global.putInt(cr, "adb_wifi_enabled", 1)
+                                    SettingsHelper.putGlobalInt(cr, "adb_wifi_enabled", 1)
                                 }
                             }
                         }
@@ -116,9 +117,14 @@ class AdbStartWorker(context: Context, params: WorkerParameters) : CoroutineWork
                     }
                 }
 
-                Settings.Global.putInt(cr, "adb_wifi_enabled", 1)
                 cr.registerContentObserver(Settings.Global.getUriFor("adb_wifi_enabled"), false, observer)
-                startDiscoveryWithTimeout()
+                if (SettingsHelper.putGlobalInt(cr, "adb_wifi_enabled", 1) ||
+                    Settings.Global.getInt(cr, "adb_wifi_enabled", 0) == 1) {
+                    startDiscoveryWithTimeout()
+                } else {
+                    // Can't turn wireless debugging on ourselves: wait for the user, the observer continues from there
+                    updateNotification(applicationContext, WorkerState.AWAITING_WIRELESS_DEBUGGING)
+                }
 
                 awaitClose {
                     adbMdns.stop()

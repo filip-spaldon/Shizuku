@@ -52,7 +52,7 @@ object ShizukuStateMachine {
                     val permissionGranted = appContext.checkSelfPermission(WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED
                     val shouldDisableUsbDebugging = permissionGranted && ShizukuSettings.getAutoDisableUsbDebugging()
                     if (shouldDisableUsbDebugging) {
-                        Settings.Global.putInt(appContext.contentResolver, Settings.Global.ADB_ENABLED, 0)
+                        SettingsHelper.putGlobalInt(appContext.contentResolver, Settings.Global.ADB_ENABLED, 0)
                     }
                 } catch (e: Exception) {
                     Log.w("ShizukuStateMachine", "Failed to disable USB debugging", e)

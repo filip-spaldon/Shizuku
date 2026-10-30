@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import moe.shizuku.manager.utils.SettingsHelper
 import moe.shizuku.manager.R
 import moe.shizuku.manager.adb.AdbMdns
 import moe.shizuku.manager.databinding.AdbDialogBinding
@@ -57,7 +58,7 @@ class AdbDialogFragment : DialogFragment() {
         adbMdns.start()
         val context = dialog.context
         if (context.checkSelfPermission(WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED)
-            Settings.Global.putInt(context.contentResolver, "adb_wifi_enabled", 1)
+            SettingsHelper.putGlobalInt(context.contentResolver, "adb_wifi_enabled", 1)
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             SettingsPage.Developer.HighlightWirelessDebugging.launch(context)
