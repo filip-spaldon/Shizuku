@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageInstaller
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.reandroid.apk.AndroidFrameworks
 import com.reandroid.apk.ApkModule
@@ -20,7 +22,11 @@ import com.reandroid.common.Namespace
 import moe.shizuku.manager.R
 import moe.shizuku.manager.ShizukuApplication
 import moe.shizuku.manager.utils.ApkSigner
+import moe.shizuku.manager.utils.ShizukuShell
+import moe.shizuku.manager.utils.ShizukuStateMachine
+import moe.shizuku.manager.utils.UserHandleCompat
 import java.io.File
+import kotlin.concurrent.thread
 
 private const val TAG = "ApkUtils"
 
@@ -150,6 +156,29 @@ fun buildApkFilename(): String {
 fun Context.installPackage(
     apk: File,
     cb: ((Boolean, String?) -> Unit)? = null
+) {
+    // Installing as Shizuku's shell user works even where installs from apps are blocked (e.g. by a work profile policy)
+    if (ShizukuStateMachine.isRunning()) {
+        val mainHandler = Handler(Looper.getMainLooper())
+        thread {
+            val result = ShizukuShell.run(
+                apk, "pm", "install", "-r", "--user", UserHandleCompat.myUserId().toString(), "-S", apk.length().toString()
+            )
+            if (result != null) {
+                val (exitCode, output) = result
+                mainHandler.post { cb?.invoke(exitCode == 0 && output.contains("Success"), output) }
+            } else {
+                mainHandler.post { installWithPackageInstaller(apk, cb) }
+            }
+        }
+        return
+    }
+    installWithPackageInstaller(apk, cb)
+}
+
+private fun Context.installWithPackageInstaller(
+    apk: File,
+    cb: ((Boolean, String?) -> Unit)?
 ) {
     val installer = appContext.packageManager.packageInstaller
 

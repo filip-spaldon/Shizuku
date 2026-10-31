@@ -22,7 +22,7 @@ This fork is maintained by [filip-spaldon](https://github.com/filip-spaldon). It
 * **Status notification** (Settings → Behavior, on by default): a silent notification while Shizuku is starting, running or stopping, shown as a Live Update chip on Android 16+, with a Stop action. It disappears once Shizuku is stopped, and turns into a dismissible "stopped unexpectedly" notification if Shizuku crashes or is killed.
 * **App trigger self-check**: the system can turn the "Start with selected apps" accessibility service off, for example after an OS update. Shizuku now turns it back on after boot, after its own update and whenever the app starts, and shows a notification when it can't.
 * **Toggle USB debugging with Shizuku** (Settings → Behavior, replaces "Auto-disable USB debugging"): turns USB debugging on when Shizuku starts and off when it stops. On Android 17 QPR3 apps can't change it anymore, so Shizuku does it through its own shell user while it is running. Wireless debugging must be on to start Shizuku.
-* In-app updates, source code and bug report links point to this fork.
+* In-app updates, source code and bug report links point to this fork. While Shizuku is running, updates are installed through Shizuku's shell user (`pm install`), so they work even where installing from apps is blocked, e.g. by a work profile policy.
 
 Tested on a Pixel 9 Pro running Android 17 QPR3 beta.
 
