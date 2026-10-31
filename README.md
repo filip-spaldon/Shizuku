@@ -19,6 +19,8 @@ This fork is maintained by [filip-spaldon](https://github.com/filip-spaldon). It
 * **Built against the Android 17 SDK** (`targetSdk 37`), also from [RazGame](https://github.com/RazGame/Shizuku).
 * **Start with selected apps** (Settings → Behavior): pick apps from a list, and Shizuku starts in the background whenever one of them is opened. Uses a small accessibility service that only receives window changes of the selected apps and never reads window content. If Shizuku has `WRITE_SECURE_SETTINGS`, the service is enabled automatically.
 * **Stop when the apps are closed**: if Shizuku was started by one of the selected apps, it is stopped again about a minute after none of them is in the foreground or running a foreground service (e.g. music playback). A Shizuku started manually is never stopped this way.
+* **Status notification** (Settings → Behavior, on by default): a silent notification while Shizuku is starting, running or stopping, shown as a Live Update chip on Android 16+, with a Stop action. It disappears once Shizuku is stopped, and turns into a dismissible "stopped unexpectedly" notification if Shizuku crashes or is killed.
+* **App trigger self-check**: the system can turn the "Start with selected apps" accessibility service off, for example after an OS update. Shizuku now turns it back on after boot, after its own update and whenever the app starts, and shows a notification when it can't.
 * In-app updates, source code and bug report links point to this fork.
 
 Tested on a Pixel 9 Pro running Android 17 QPR3 beta.

@@ -22,6 +22,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Lets the status notification show as an Android 16+ Live Update. -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
@@ -209,6 +211,16 @@
         </service>
 
         <service
+            android:name=".service.ShizukuStatusService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Shows the state of the Shizuku API service while it is starting, running or stopping.
+                    It runs only while the API service is active, does no polling, and can be turned off in settings." />
+        </service>
+
+        <service
             android:name=".service.WatchdogService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
@@ -230,6 +242,15 @@
             tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="rikka.shizuku.intent.action.REQUEST_BINDER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.AppTriggerCheckReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 

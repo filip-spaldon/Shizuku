@@ -36,6 +36,12 @@
             android:title="@string/settings_auto_disable_usb_debugging"
             android:summary="@string/settings_auto_disable_usb_debugging_summary" />
 
+        <SwitchPreferenceCompat
+            android:key="status_notification"
+            android:defaultValue="true"
+            android:title="@string/settings_status_notification"
+            android:summary="@string/settings_status_notification_summary" />
+
         <Preference
             android:key="app_trigger"
             android:title="@string/settings_app_trigger" />

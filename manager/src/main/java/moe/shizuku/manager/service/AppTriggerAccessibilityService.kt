@@ -2,6 +2,9 @@ package moe.shizuku.manager.service
 
 import android.Manifest.permission.WRITE_SECURE_SETTINGS
 import android.accessibilityservice.AccessibilityService
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,9 +15,12 @@ import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import androidx.core.app.NotificationCompat
 import moe.shizuku.manager.AppConstants
+import moe.shizuku.manager.R
 import moe.shizuku.manager.ShizukuSettings
 import moe.shizuku.manager.receiver.ShizukuReceiverStarter
+import moe.shizuku.manager.utils.SettingsPage
 import moe.shizuku.manager.utils.ShizukuStateMachine
 import moe.shizuku.manager.utils.ShizukuSystemApis
 import moe.shizuku.manager.utils.UserHandleCompat
@@ -40,6 +46,9 @@ class AppTriggerAccessibilityService : AccessibilityService() {
         // ActivityManager.PROCESS_STATE_* (hidden API): 0..5 covers persistent, top and foreground service states
         private const val PROCESS_STATE_PERSISTENT = 0
         private const val PROCESS_STATE_BOUND_FOREGROUND_SERVICE = 5
+
+        private const val CHANNEL_ID = "app_trigger"
+        private const val NOTIFICATION_ID = 1004
 
         private fun componentName(context: Context) =
             ComponentName(context, AppTriggerAccessibilityService::class.java).flattenToString()
@@ -76,6 +85,39 @@ class AppTriggerAccessibilityService : AccessibilityService() {
                 Log.w(AppConstants.TAG, "Failed to toggle app trigger accessibility service", e)
                 false
             }
+        }
+
+        /**
+         * The system can turn the service off behind our back (seen after an OS update), which silently breaks
+         * the app trigger. Turns it back on, or tells the user when that isn't possible.
+         */
+        fun ensureEnabled(context: Context) {
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (ShizukuSettings.getAppTriggerPackages().isEmpty() || setEnabled(context, true)) {
+                nm.cancel(NOTIFICATION_ID)
+                return
+            }
+
+            Log.w(AppConstants.TAG, "App trigger accessibility service is off and can't be turned on")
+            nm.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_ID,
+                    context.getString(R.string.settings_app_trigger),
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+            )
+            val intent = SettingsPage.Accessibility.buildIntent(context)
+            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_system_icon)
+                .setContentTitle(context.getString(R.string.app_trigger_disabled_notification_title))
+                .setContentText(context.getString(R.string.app_trigger_disabled_notification_text))
+                .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.app_trigger_disabled_notification_text)))
+                .setAutoCancel(true)
+                .setContentIntent(
+                    PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                )
+                .build()
+            nm.notify(NOTIFICATION_ID, notification)
         }
     }
 

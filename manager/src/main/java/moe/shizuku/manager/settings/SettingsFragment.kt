@@ -52,6 +52,7 @@ import moe.shizuku.manager.receiver.BootCompleteReceiver
 import moe.shizuku.manager.receiver.NotifCancelReceiver
 import moe.shizuku.manager.receiver.ShizukuReceiverStarter
 import moe.shizuku.manager.service.AppTriggerAccessibilityService
+import moe.shizuku.manager.service.ShizukuStatusService
 import moe.shizuku.manager.utils.CustomTabsHelper
 import moe.shizuku.manager.utils.EnvironmentUtils
 import moe.shizuku.manager.utils.SettingsHelper
@@ -352,6 +353,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         when (key) {
             KEY_WATCHDOG -> watchdogPreference.isChecked = ShizukuSettings.isWatchdogRunning()
             KEY_APP_TRIGGER_PACKAGES -> updateAppTriggerSummary()
+            KEY_STATUS_NOTIFICATION -> ShizukuStatusService.refresh(requireContext())
         }
     }
 

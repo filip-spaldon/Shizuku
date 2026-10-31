@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.topjohnwu.superuser.Shell
 import moe.shizuku.manager.ktx.logd
+import moe.shizuku.manager.service.AppTriggerAccessibilityService
+import moe.shizuku.manager.service.ShizukuStatusService
 import moe.shizuku.manager.service.WatchdogService
 import moe.shizuku.manager.utils.ShizukuStateMachine
 import org.lsposed.hiddenapibypass.HiddenApiBypass
@@ -44,6 +46,8 @@ class ShizukuApplication : Application() {
         AppCompatDelegate.setDefaultNightMode(ShizukuSettings.getNightMode())
 
         if(ShizukuSettings.getWatchdog()) WatchdogService.start(context)
+        ShizukuStatusService.register(context)
+        AppTriggerAccessibilityService.ensureEnabled(context)
     }
 
     override fun onCreate() {

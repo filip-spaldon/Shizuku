@@ -36,6 +36,7 @@ public class ShizukuSettings {
         public static final String KEY_APP_TRIGGER_PACKAGES = "app_trigger_packages";
         public static final String KEY_APP_TRIGGER_STOP = "app_trigger_stop";
         public static final String KEY_APP_TRIGGER_ARMED = "app_trigger_armed";
+        public static final String KEY_STATUS_NOTIFICATION = "status_notification";
         public static final String KEY_LANGUAGE = "language";
         public static final String KEY_TRANSLATION = "translation";
         public static final String KEY_TRANSLATION_CONTRIBUTORS = "translation_contributors";
@@ -180,6 +181,10 @@ public class ShizukuSettings {
 
     public static void setAppTriggerPackages(Set<String> packages) {
         getPreferences().edit().putStringSet(Keys.KEY_APP_TRIGGER_PACKAGES, new HashSet<>(packages)).apply();
+    }
+
+    public static boolean getStatusNotification() {
+        return getPreferences().getBoolean(Keys.KEY_STATUS_NOTIFICATION, true);
     }
 
     public static boolean getAppTriggerStop() {
