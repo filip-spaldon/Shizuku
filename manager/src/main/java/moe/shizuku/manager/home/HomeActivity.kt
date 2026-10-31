@@ -237,8 +237,7 @@ abstract class HomeActivity : AppBarActivity() {
                     MaterialAlertDialogBuilder(this)
                         .setMessage(R.string.dialog_stop_message)
                         .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
-                            ShizukuStateMachine.set(ShizukuStateMachine.State.STOPPING)
-                            runCatching { Shizuku.exit() }
+                            ShizukuStateMachine.stop()
                         }
                         .setNegativeButton(android.R.string.cancel, null)
                         .show()

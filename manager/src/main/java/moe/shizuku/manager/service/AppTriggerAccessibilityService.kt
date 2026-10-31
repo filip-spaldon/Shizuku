@@ -227,8 +227,7 @@ class AppTriggerAccessibilityService : AccessibilityService() {
         }
 
         Log.i(AppConstants.TAG, "Selected apps closed, stopping Shizuku")
-        ShizukuStateMachine.set(ShizukuStateMachine.State.STOPPING)
-        runCatching { Shizuku.exit() }
+        ShizukuStateMachine.stop()
     }
 
     override fun onInterrupt() {}

@@ -6,6 +6,7 @@ import android.provider.Settings
 import android.util.Log
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.concurrent.thread
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -24,7 +25,10 @@ object ShizukuStateMachine {
 
     init {
         Shizuku.addBinderReceivedListenerSticky(
-            Shizuku.OnBinderReceivedListener { set(State.RUNNING) }
+            Shizuku.OnBinderReceivedListener {
+                set(State.RUNNING)
+                if (ShizukuSettings.getAutoDisableUsbDebugging()) thread { setUsbDebugging(true) }
+            }
         )
         Shizuku.addBinderDeadListener(
             Shizuku.OnBinderDeadListener { setDead() }
@@ -43,6 +47,27 @@ object ShizukuStateMachine {
     }
 
     fun set(newState: State) = transition { newState }
+
+    /**
+     * Since Android 17 QPR3 apps can't change USB debugging anymore (it needs MANAGE_DEBUGGING),
+     * but Shizuku's shell user still can, so it is toggled through Shizuku while it runs.
+     */
+    private fun setUsbDebugging(enabled: Boolean) {
+        val value = if (enabled) "1" else "0"
+        if (ShizukuShell.run("settings", "put", "global", Settings.Global.ADB_ENABLED, value) != 0) {
+            Log.w("ShizukuStateMachine", "Failed to set USB debugging to $value")
+        }
+    }
+
+    /** Stops Shizuku, turning USB debugging off first when the setting asks for it, while Shizuku can still do that. */
+    fun stop() {
+        if (!isRunning()) return
+        set(State.STOPPING)
+        thread {
+            if (ShizukuSettings.getAutoDisableUsbDebugging()) setUsbDebugging(false)
+            runCatching { Shizuku.exit() }
+        }
+    }
 
     fun setDead() = transition {
         when (it) {

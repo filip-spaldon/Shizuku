@@ -148,10 +148,7 @@ class ShizukuStatusService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP_SHIZUKU) {
-            if (ShizukuStateMachine.isRunning()) {
-                ShizukuStateMachine.set(State.STOPPING)
-                runCatching { Shizuku.exit() }
-            }
+            ShizukuStateMachine.stop()
             return START_NOT_STICKY
         }
 
